@@ -26,52 +26,59 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
-    NavBar::end();
-    ?>
+    <ul id="menu">
+        <li id="botonNav" > <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span> Taurus Gym Platinum </li>
+        <?=  Html::a("Principal",['site/login']) ?>
+        <?=  Html::a("Nosotros",['site/login']) ?></li>
+        <li class="logodiv"><?= Html::img("@web/images/logo.jpg", ["class"=> "img-circle logo"]) ?></li>
+        <?=  Html::a("Promociones",['site/login']) ?>
+        <?php
+            if(Yii::$app->user->isGuest){
+                echo Html::a("Entrar",['site/login']);
+            }else{
+                echo Html::a("Mi Cuenta",['site/login']);
+                echo Html::a("Salir (".Yii::$app->user->identity->username.")",['site/logout'],[
+                    'data-confirm' => "¿Realmente deseas salir del sistema?",
+                    'data-method' => 'post',
+                    //'data-params' => 'myParam=anyValue'
+                ]);
+            }
+        ?>
+    </ul>
 
     <div class="container">
+        <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= $content ?>
+        </div>
     </div>
 </div>
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left">&copy; TAURUS GYM PLATINUM  <?= date('Y') ?></p>
     </div>
 </footer>
+
+<?php
+    $this->registerJs(
+        "
+            var contador = 1;
+            $('#botonNav').click(function(){
+                if(contador == 1){
+                    contador = 0;
+                    $('#menu').css('height', 'auto');
+                } else {
+                    contador = 1;
+                    $('#menu').css('height', '72px');
+                }
+         
+            });
+        "
+    );
+?>
 
 <?php $this->endBody() ?>
 </body>
