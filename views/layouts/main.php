@@ -28,10 +28,35 @@ AppAsset::register($this);
 <div class="wrap">
     <ul id="menu">
         <li id="botonNav" > <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span> Taurus Gym Platinum </li>
-        <?=  Html::a("Principal",['site/login']) ?>
-        <?=  Html::a("Nosotros",['site/login']) ?></li>
+        <?php
+            $extraMenu= false;
+            if (\Yii::$app->user->can('administrador')) {
+                $extraMenu = true;
+                echo Html::a("Administrar",['administrar/index']);
+            }
+
+            if (\Yii::$app->user->can('empleado')) {
+                echo Html::a("Ventas",['administrar/index']);
+                echo Html::a("Caja",['administrar/index']);
+                $extraMenu = true;
+            }
+            if(!$extraMenu){
+                echo Html::a("Principal",['site/login']);
+                echo Html::a("Nosotros",['site/login']);
+            }
+            
+        ?>
         <li class="logodiv"><?= Html::img("@web/images/logo.jpg", ["class"=> "img-circle logo"]) ?></li>
-        <?=  Html::a("Promociones",['site/login']) ?>
+        <?php 
+
+            if (\Yii::$app->user->can('empleado')) {
+                echo Html::a("Membrecias",['administrar/index']);
+                $extraMenu = true;
+            }
+            if(!$extraMenu){
+                echo Html::a("Promociones",['site/login']);
+            }
+        ?>
         <?php
             if(Yii::$app->user->isGuest){
                 echo Html::a("Entrar",['site/login']);

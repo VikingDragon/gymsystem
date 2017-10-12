@@ -77,6 +77,9 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            if (\Yii::$app->user->can('empleado')||\Yii::$app->user->can('administrador')) {
+                return $this->redirect(['administrar/index']);
+            }
             return $this->goBack();
         }
         return $this->render('login', [

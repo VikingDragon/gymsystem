@@ -3,17 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Usuario;
-use app\models\search\UsuarioSearch;
+use app\models\Cliente;
+use app\models\ClienteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
- * UsuarioController implements the CRUD actions for Usuario model.
+ * ClienteController implements the CRUD actions for Cliente model.
  */
-class UsuarioController extends Controller
+class ClienteController extends Controller
 {
     /**
      * @inheritdoc
@@ -27,25 +26,16 @@ class UsuarioController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['administrador'],
-                    ],
-                ],
-            ],
         ];
     }
 
     /**
-     * Lists all Usuario models.
+     * Lists all Cliente models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new UsuarioSearch();
+        $searchModel = new ClienteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -55,28 +45,29 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Displays a single Usuario model.
-     * @param integer $id
+     * Displays a single Cliente model.
+     * @param integer $idcliente
+     * @param integer $usuario_idusuario
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView($idcliente, $usuario_idusuario)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($idcliente, $usuario_idusuario),
         ]);
     }
 
     /**
-     * Creates a new Usuario model.
+     * Creates a new Cliente model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Usuario();
+        $model = new Cliente();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idusuario]);
+            return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -85,17 +76,18 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Updates an existing Usuario model.
+     * Updates an existing Cliente model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param integer $idcliente
+     * @param integer $usuario_idusuario
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($idcliente, $usuario_idusuario)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($idcliente, $usuario_idusuario);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idusuario]);
+            return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -104,28 +96,30 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Deletes an existing Usuario model.
+     * Deletes an existing Cliente model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param integer $idcliente
+     * @param integer $usuario_idusuario
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($idcliente, $usuario_idusuario)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($idcliente, $usuario_idusuario)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Usuario model based on its primary key value.
+     * Finds the Cliente model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Usuario the loaded model
+     * @param integer $idcliente
+     * @param integer $usuario_idusuario
+     * @return Cliente the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($idcliente, $usuario_idusuario)
     {
-        if (($model = Usuario::findOne($id)) !== null) {
+        if (($model = Cliente::findOne(['idcliente' => $idcliente, 'usuario_idusuario' => $usuario_idusuario])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

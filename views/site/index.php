@@ -19,16 +19,16 @@ $this->title = 'Taurus GYM';
           <!-- Wrapper for slides -->
           <div class="carousel-inner" role="listbox">
             <div class="item active">
-              <?= Html::img("images/banner.jpg") ?>
+              <?= Html::img("@web/images/banner.jpg") ?>
             </div>
             <div class="item">
-              <?= Html::img("images/banner2.jpg") ?>
+              <?= Html::img("@web/images/banner2.jpg") ?>
             </div>
             <div class="item">
-              <?= Html::img("images/banner3.jpg") ?>
+              <?= Html::img("@web/images/banner3.jpg") ?>
             </div>
             <div class="item">
-              <?= Html::img("images/banner4.jpg") ?>
+              <?= Html::img("@web/images/banner4.jpg") ?>
             </div>
           </div>
 
