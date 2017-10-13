@@ -47,6 +47,7 @@ class EmpleadoController extends Controller
     public function actionIndex()
     {
         $searchModel = new EmpleadoSearch();
+        $searchModel->estado = 1;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

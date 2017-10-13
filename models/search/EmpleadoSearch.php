@@ -12,6 +12,8 @@ use app\models\Empleado;
  */
 class EmpleadoSearch extends Empleado
 {
+    public $usuario;
+    public $estado;
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class EmpleadoSearch extends Empleado
     {
         return [
             [['idempleado', 'usuario_idusuario', 'sexo_idsexo'], 'integer'],
-            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'correo', 'telefono'], 'safe'],
+            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'correo', 'telefono', 'usuario', 'estado'], 'safe'],
         ];
     }
 
@@ -42,12 +44,24 @@ class EmpleadoSearch extends Empleado
     public function search($params)
     {
         $query = Empleado::find();
-
+        $query->joinWith('usuarioIdusuario');
+        $query->leftJoin('estado_empleado', 'estado_empleado.idestado_empleado = (
+  SELECT idestado_empleado FROM `estado_empleado` WHERE empleado_idempleado = empleado.idempleado ORDER BY idestado_empleado DESC LIMIT 1)');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['usuario'] = [
+            'asc' => ['username' => SORT_ASC],
+            'desc' => ['username' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['estado'] = [
+            'asc' => ['idestado_empleado' => SORT_ASC],
+            'desc' => ['idestado_empleado' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -63,6 +77,7 @@ class EmpleadoSearch extends Empleado
             'nacimiento' => $this->nacimiento,
             'usuario_idusuario' => $this->usuario_idusuario,
             'sexo_idsexo' => $this->sexo_idsexo,
+            'estado_idestado' => $this->estado,
         ]);
 
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
@@ -70,6 +85,7 @@ class EmpleadoSearch extends Empleado
             ->andFilterWhere(['like', 'amaterno', $this->amaterno])
             ->andFilterWhere(['like', 'correo', $this->correo])
             ->andFilterWhere(['like', 'telefono', $this->telefono]);
+        $query->andFilterWhere(['like', 'username', $this->usuario]);
 
         return $dataProvider;
     }

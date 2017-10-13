@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Empleado', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Registrar Empleado', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -24,11 +24,31 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'idempleado',
+            //'idempleado',
+            [
+                'attribute' => 'usuario',
+                'label' => 'Usuario',
+                'format' => 'raw',              
+                'value'=>function ($data) {
+                    return $data->usuarioIdusuario->username;
+                },
+            ],
             'nombre',
             'apaterno',
             'amaterno',
-            'nacimiento',
+            [
+                'attribute' => 'estado',
+                'label' => 'Estado',
+                'filter'=>array(null => 'Todo',"1"=>"Activo","2"=>"Baja"),
+                'format' => 'raw',              
+                'value'=>function ($data) {
+                    return $data->estadoEmpleado->estadoIdestado->estado;
+                },
+            ],
+
+            
+
+            //'nacimiento',
             // 'correo',
             // 'telefono',
             // 'usuario_idusuario',

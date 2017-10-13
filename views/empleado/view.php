@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Empleado */
 
-$this->title = $model->idempleado;
+$this->title = "Detalles del empleado # ".$model->idempleado;
 $this->params['breadcrumbs'][] = ['label' => 'Empleados', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,11 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->idempleado], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->idempleado], [
+        <?= Html::a('Actualizar', ['update', 'id' => $model->idempleado], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Eliminar', ['delete', 'id' => $model->idempleado], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => '¿Estas seguro de querer eliminar este usuario?',
                 'method' => 'post',
             ],
         ]) ?>
@@ -29,14 +29,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'idempleado',
-            'nombre',
-            'apaterno',
-            'amaterno',
+            [
+                'label'=> 'Usuario',
+                'value' => $model->usuarioIdusuario->username
+            ],
+            [
+                'label'=> 'Estado',
+                'value' => $model->estadoEmpleado->estadoIdestado->estado
+            ],
+            [
+                'label'=>$model->estadoEmpleado->estadoIdestado->estado?"Fecha de ingreso":"Fecha de baja",
+                'value'=>$model->estadoEmpleado->fecha
+            ],
+            [
+                'label'=> 'Nombre',
+                'value' => $model->nombre." ".$model->apaterno." ".$model->amaterno
+            ],
             'nacimiento',
+            'sexoIdsexo.sexo',
             'correo',
             'telefono',
-            'usuario_idusuario',
-            'sexo_idsexo',
+            
         ],
     ]) ?>
 

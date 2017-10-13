@@ -93,6 +93,22 @@ class Empleado extends \yii\db\ActiveRecord
     }
 
     /**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getEstadoEmpleado() 
+    { 
+        return $this->hasOne(EstadoEmpleado::className(), ['empleado_idempleado' => 'idempleado'])->orderBy(['idestado_empleado' => SORT_DESC]); 
+    } 
+
+    /**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getEstadoEmpleados() 
+    { 
+        return $this->hasMany(EstadoEmpleado::className(), ['empleado_idempleado' => 'idempleado']); 
+    } 
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getHistorialEmpleados()

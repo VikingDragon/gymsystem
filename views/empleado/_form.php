@@ -43,18 +43,23 @@ use yii\jui\DatePicker;
                 'dateFormat' => 'yyyy-MM-dd',
             ]) ?>
         </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'correo')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'telefono')->textInput(['maxlength' => true]) ?>
-        </div>
+
         <div class="col-md-3">
             <?=
                 $form->field($model, 'sexo_idsexo')
                     ->dropDownList($sexo,['prompt'=>'Selecciona el Sexo']);
             ?>
         </div>
+
+        <div class="col-md-3">
+            <?= $form->field($model, 'telefono')->textInput(['maxlength' => true]) ?>
+        </div>
+
+        
+        <div class="col-md-3">
+            <?= $form->field($model, 'correo')->textInput(['maxlength' => true]) ?>
+        </div>
+        
     </div>
 
     <div class="form-group">
