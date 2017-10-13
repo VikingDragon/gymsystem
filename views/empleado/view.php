@@ -16,13 +16,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Actualizar', ['update', 'id' => $model->idempleado], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Eliminar', ['delete', 'id' => $model->idempleado], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => '¿Estas seguro de querer eliminar este usuario?',
-                'method' => 'post',
-            ],
-        ]) ?>
+
+        <?php
+            if($model->estadoEmpleado->estado_idestado==1){
+                echo Html::a('Eliminar', ['delete', 'id' => $model->idempleado], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => '¿Estas seguro de querer eliminar este usuario?',
+                        'method' => 'post',
+                    ],
+                ]);
+            }
+        ?>
     </p>
 
     <?= DetailView::widget([
@@ -38,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => $model->estadoEmpleado->estadoIdestado->estado
             ],
             [
-                'label'=>$model->estadoEmpleado->estadoIdestado->estado?"Fecha de ingreso":"Fecha de baja",
+                'label'=>$model->estadoEmpleado->estado_idestado==1?"Fecha de ingreso":"Fecha de baja",
                 'value'=>$model->estadoEmpleado->fecha
             ],
             [

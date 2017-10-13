@@ -5,12 +5,12 @@ namespace app\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Empleado;
+use app\models\Cliente;
 
 /**
- * EmpleadoSearch represents the model behind the search form about `app\models\Empleado`.
+ * ClienteSearch represents the model behind the search form about `app\models\Cliente`.
  */
-class EmpleadoSearch extends Empleado
+class ClienteSearch extends Cliente
 {
     public $usuario;
     public $estado;
@@ -20,8 +20,8 @@ class EmpleadoSearch extends Empleado
     public function rules()
     {
         return [
-            [['idempleado', 'usuario_idusuario', 'sexo_idsexo'], 'integer'],
-            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'correo', 'telefono', 'usuario', 'estado'], 'safe'],
+            [['idcliente', 'sexo_idsexo', 'usuario_idusuario', 'empleado_idempleado'], 'integer'],
+            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'usuario', 'estado'], 'safe'],
         ];
     }
 
@@ -43,10 +43,10 @@ class EmpleadoSearch extends Empleado
      */
     public function search($params)
     {
-        $query = Empleado::find();
+        $query = Cliente::find();
         $query->joinWith('usuarioIdusuario');
-        $query->leftJoin('estado_empleado', 'estado_empleado.idestado_empleado = (
-  SELECT idestado_empleado FROM `estado_empleado` WHERE empleado_idempleado = empleado.idempleado ORDER BY idestado_empleado DESC LIMIT 1)');
+        $query->leftJoin('historial', 'historial.idhistorial = (
+  SELECT idhistorial FROM `historial` WHERE cliente_idcliente = cliente.idcliente ORDER BY idhistorial DESC LIMIT 1)');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -73,18 +73,18 @@ class EmpleadoSearch extends Empleado
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'idempleado' => $this->idempleado,
+            'idcliente' => $this->idcliente,
             'nacimiento' => $this->nacimiento,
-            'usuario_idusuario' => $this->usuario_idusuario,
             'sexo_idsexo' => $this->sexo_idsexo,
+            'usuario_idusuario' => $this->usuario_idusuario,
+            'empleado_idempleado' => $this->empleado_idempleado,
             'estado_idestado' => $this->estado,
         ]);
 
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
             ->andFilterWhere(['like', 'apaterno', $this->apaterno])
-            ->andFilterWhere(['like', 'amaterno', $this->amaterno])
-            ->andFilterWhere(['like', 'correo', $this->correo])
-            ->andFilterWhere(['like', 'telefono', $this->telefono]);
+            ->andFilterWhere(['like', 'amaterno', $this->amaterno]);
+
         $query->andFilterWhere(['like', 'username', $this->usuario]);
 
         return $dataProvider;

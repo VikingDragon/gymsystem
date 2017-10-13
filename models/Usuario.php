@@ -136,4 +136,9 @@ class Usuario extends \yii\db\ActiveRecord  implements IdentityInterface
     {
         return $this->hasOne(Cliente::className(), ['usuario_idusuario' => 'idusuario']);
     }
+
+     public function getEmpleado()
+    {
+        return $this->hasOne(Empleado::className(), ['usuario_idusuario' => 'idusuario']);
+    }
 }

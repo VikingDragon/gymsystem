@@ -26,6 +26,7 @@ class EmpleadoController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'reactivar' => ['POST'],
                 ],
             ],
             'access' => [
@@ -101,7 +102,6 @@ class EmpleadoController extends Controller
                     return $this->redirect(['view', 'id' => $model->idempleado]);
                 }
             }
-            $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
@@ -174,6 +174,16 @@ class EmpleadoController extends Controller
         //$model->delete();
         //$usuario->delete();
         return $this->redirect(['index']);
+    }
+
+    public function actionReactivar($id)
+    {        
+        $estadoUsuario = new \app\models\EstadoEmpleado();
+        $estadoUsuario->fecha = date("Y-m-d");
+        $estadoUsuario->estado_idestado = 1;
+        $estadoUsuario->empleado_idempleado = $id;
+        $estadoUsuario->save();  
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**

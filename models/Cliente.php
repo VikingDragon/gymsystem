@@ -14,7 +14,9 @@ use Yii;
  * @property string $nacimiento
  * @property integer $sexo_idsexo
  * @property integer $usuario_idusuario
+ * @property integer $empleado_idempleado
  *
+ * @property Empleado $empleadoIdempleado
  * @property Sexo $sexoIdsexo
  * @property Usuario $usuarioIdusuario
  * @property Correo[] $correos
@@ -42,10 +44,11 @@ class Cliente extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'sexo_idsexo', 'usuario_idusuario'], 'required'],
+            [['nombre', 'apaterno', 'amaterno', 'nacimiento', 'sexo_idsexo', 'usuario_idusuario', 'empleado_idempleado'], 'required'],
             [['nacimiento'], 'safe'],
-            [['sexo_idsexo', 'usuario_idusuario'], 'integer'],
+            [['sexo_idsexo', 'usuario_idusuario', 'empleado_idempleado'], 'integer'],
             [['nombre', 'apaterno', 'amaterno'], 'string', 'max' => 45],
+            [['empleado_idempleado'], 'exist', 'skipOnError' => true, 'targetClass' => Empleado::className(), 'targetAttribute' => ['empleado_idempleado' => 'idempleado']],
             [['sexo_idsexo'], 'exist', 'skipOnError' => true, 'targetClass' => Sexo::className(), 'targetAttribute' => ['sexo_idsexo' => 'idsexo']],
             [['usuario_idusuario'], 'exist', 'skipOnError' => true, 'targetClass' => Usuario::className(), 'targetAttribute' => ['usuario_idusuario' => 'idusuario']],
         ];
@@ -57,14 +60,23 @@ class Cliente extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idcliente' => 'Idcliente',
+            'idcliente' => 'Folio Cliente',
             'nombre' => 'Nombre',
-            'apaterno' => 'Apaterno',
-            'amaterno' => 'Amaterno',
-            'nacimiento' => 'Nacimiento',
-            'sexo_idsexo' => 'Sexo Idsexo',
-            'usuario_idusuario' => 'Usuario Idusuario',
+            'apaterno' => 'Apellido Paterno',
+            'amaterno' => 'Apellido Materno',
+            'nacimiento' => 'Fecha de Nacimiento',
+            'sexo_idsexo' => 'Sexo',
+            'usuario_idusuario' => 'Usuario',
+            'empleado_idempleado' => 'Empleado',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmpleadoIdempleado()
+    {
+        return $this->hasOne(Empleado::className(), ['idempleado' => 'empleado_idempleado']);
     }
 
     /**
@@ -113,6 +125,14 @@ class Cliente extends \yii\db\ActiveRecord
     public function getHistorials()
     {
         return $this->hasMany(Historial::className(), ['cliente_idcliente' => 'idcliente']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHistorial()
+    {
+        return $this->hasOne(Historial::className(), ['cliente_idcliente' => 'idcliente'])->orderBy(['idhistorial' => SORT_DESC]);
     }
 
     /**

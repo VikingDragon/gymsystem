@@ -3,11 +3,14 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Usuario;
 use app\models\Cliente;
-use app\models\ClienteSearch;
+use app\models\search\ClienteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+
 
 /**
  * ClienteController implements the CRUD actions for Cliente model.
@@ -24,6 +27,16 @@ class ClienteController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'reactivar' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['administrador'],
+                    ],
                 ],
             ],
         ];
@@ -36,6 +49,7 @@ class ClienteController extends Controller
     public function actionIndex()
     {
         $searchModel = new ClienteSearch();
+        $searchModel->estado = 1;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -65,14 +79,40 @@ class ClienteController extends Controller
     public function actionCreate()
     {
         $model = new Cliente();
+        $usuario = new Usuario();
+        $model->empleado_idempleado = Yii::$app->user->identity->empleado->idempleado;
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        try {
+            if ($usuario->load(Yii::$app->request->post()) && $usuario->save()) {
+                $model->load(Yii::$app->request->post());
+                $model->usuario_idusuario = $usuario->idusuario;
+                if ($model->save()) {
+                    //asigna el rol seleccionado
+                    $estadoUsuario = new \app\models\Historial();
+                    $estadoUsuario->fecha = date("Y-m-d");
+                    $estadoUsuario->estado_idestado = 1;
+                    $estadoUsuario->cliente_idcliente = $model->idcliente;
+                    $estadoUsuario->empleado_idempleado = $model->empleado_idempleado; 
+                    $estadoUsuario->save();
+
+                    $transaction->commit();
+                    return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
+                }
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
         }
+
+        return $this->render('create', [
+            'model' => $model,
+            'usuario' => $usuario,
+        ]);
     }
 
     /**
@@ -85,14 +125,22 @@ class ClienteController extends Controller
     public function actionUpdate($idcliente, $usuario_idusuario)
     {
         $model = $this->findModel($idcliente, $usuario_idusuario);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $usuario = Usuario::findOne($model->usuario_idusuario);
+        $passAntigua = $usuario->password;
+        if ($usuario->load(Yii::$app->request->post()) && $usuario->save()) {
+            $model->load(Yii::$app->request->post());
+            if(strlen($usuario->password)==32){
+                $usuario->password = $passAntigua;
+            }
+            if ($model->save()) {
+                return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+            'usuario' => $usuario,
+        ]);
     }
 
     /**
@@ -104,9 +152,25 @@ class ClienteController extends Controller
      */
     public function actionDelete($idcliente, $usuario_idusuario)
     {
-        $this->findModel($idcliente, $usuario_idusuario)->delete();
+        $estadoUsuario = new \app\models\Historial();
+        $estadoUsuario->fecha = date("Y-m-d");
+        $estadoUsuario->estado_idestado = 2;
+        $estadoUsuario->empleado_idempleado = Yii::$app->user->identity->empleado->idempleado;
+        $estadoUsuario->cliente_idcliente = $idcliente;
+        $estadoUsuario->save();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionReactivar($idcliente, $usuario_idusuario)
+    {        
+        $estadoUsuario = new \app\models\Historial();
+        $estadoUsuario->fecha = date("Y-m-d");
+        $estadoUsuario->estado_idestado = 1;
+        $estadoUsuario->empleado_idempleado = Yii::$app->user->identity->empleado->idempleado;
+        $estadoUsuario->cliente_idcliente = $idcliente;
+        $estadoUsuario->save();  
+        return $this->redirect(['view', 'idcliente' => $idcliente, 'usuario_idusuario' => $usuario_idusuario]);
     }
 
     /**

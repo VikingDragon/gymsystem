@@ -39,22 +39,32 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'estado',
                 'label' => 'Estado',
-                'filter'=>array(null => 'Todo',"1"=>"Activo","2"=>"Baja"),
+                'filter'=>array("1"=>"Activo","2"=>"Baja"),
                 'format' => 'raw',              
                 'value'=>function ($data) {
                     return $data->estadoEmpleado->estadoIdestado->estado;
                 },
             ],
-
-            
-
-            //'nacimiento',
-            // 'correo',
-            // 'telefono',
-            // 'usuario_idusuario',
-            // 'sexo_idsexo',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {reactivar}',
+                'buttons'=>[
+                    'delete' => function ($url, $model, $key) {
+                        return $model->estadoEmpleado->estado_idestado === 1 ? Html::a('<span class="glyphicon glyphicon-trash"></span>', $url,['title'=>'Eliminar',
+                        'data' => [
+                            'confirm' => '¿Estas seguro que deseas dar de baja este empleado?',
+                            'method' => 'post',
+                        ],]) : '';
+                    },
+                    'reactivar' => function ($url, $model, $key) {
+                        return $model->estadoEmpleado->estado_idestado === 2 ? Html::a('<span class="glyphicon glyphicon-ok-circle"></span>', $url,['title'=>'Reactivar',
+                        'data' => [
+                            'confirm' => '¿Estas seguro que deseas reactivar este empleado?',
+                            'method' => 'post',
+                        ],]) : '';
+                    }
+                ],
+            ],
         ],
     ]); ?>
 </div>
