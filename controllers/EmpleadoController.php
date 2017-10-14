@@ -134,6 +134,8 @@ class EmpleadoController extends Controller
             $model->load(Yii::$app->request->post());
             if(strlen($usuario->password)==32){
                 $usuario->password = $passAntigua;
+            }else{
+                $usuario->password =  md5($usuario->password);
             }
             if ($model->save()) {
                 if($rol->item_name != $model->tipo){
