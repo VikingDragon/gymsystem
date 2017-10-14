@@ -56,8 +56,21 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Usuario/Contraseña Incorrectos');
             }
+
+            if(isset($user->empleado)){
+                if ($user->empleado->estadoEmpleado->estado_idestado==2) {
+                    $this->addError($attribute, 'Usuario Desactivado');
+                }
+            }
+
+            if(isset($user->clientes)){
+                if ($user->clientes->historial->estado_idestado==2) {
+                    $this->addError($attribute, 'Usuario Desactivado');
+                }
+            }
+            
         }
     }
 

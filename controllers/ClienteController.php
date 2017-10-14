@@ -35,7 +35,7 @@ class ClienteController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrador'],
+                        'roles' => ['empleado'],
                     ],
                 ],
             ],
