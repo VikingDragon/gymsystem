@@ -134,6 +134,7 @@ class ClienteController extends Controller
             }else{
                 $usuario->password =  md5($usuario->password);
             }
+            $usuario->save();
             if ($model->save()) {
                 return $this->redirect(['view', 'idcliente' => $model->idcliente, 'usuario_idusuario' => $model->usuario_idusuario]);
             }

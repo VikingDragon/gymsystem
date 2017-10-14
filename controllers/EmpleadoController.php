@@ -137,6 +137,7 @@ class EmpleadoController extends Controller
             }else{
                 $usuario->password =  md5($usuario->password);
             }
+            $usuario->save();
             if ($model->save()) {
                 if($rol->item_name != $model->tipo){
                     $auth = \Yii::$app->authManager;
