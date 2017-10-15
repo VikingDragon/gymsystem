@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Membrecia */
 
-$this->title = 'Actualizar Membrecia: #' . $model->idmembrecia;
+$this->title = 'Actualizar Membrecia: #' . $model->inventario_idinventario;
 $this->params['breadcrumbs'][] = ['label' => 'Membrecias', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->idmembrecia, 'url' => ['view', 'id' => $model->idmembrecia]];
+$this->params['breadcrumbs'][] = ['label' => $model->inventario_idinventario, 'url' => ['view', 'id' => $model->inventario_idinventario]];
 $this->params['breadcrumbs'][] = 'Actualizar';
 ?>
 <div class="membrecia-update">
@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = 'Actualizar';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'inventario' => $inventario,
     ]) ?>
 
 </div>

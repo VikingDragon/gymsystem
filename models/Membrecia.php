@@ -7,18 +7,16 @@ use Yii;
 /**
  * This is the model class for table "membrecia".
  *
- * @property integer $idmembrecia
- * @property string $descripcion
- * @property string $detalles
+ * @property integer $inventario_idinventario
  * @property integer $personas
- * @property double $costo
  * @property string $inicio
  * @property string $fin
  * @property integer $estado_idestado
  *
  * @property Grupo[] $grupos
+ * @property Historial[] $historials
  * @property Estado $estadoIdestado
- * @property VentaMembrecia[] $ventaMembrecias
+ * @property Inventario $inventarioIdinventario
  */
 class Membrecia extends \yii\db\ActiveRecord
 {
@@ -36,13 +34,11 @@ class Membrecia extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['descripcion', 'detalles', 'personas', 'costo', 'estado_idestado'], 'required'],
-            [['personas', 'estado_idestado'], 'integer'],
-            [['costo'], 'number'],
+            [['inventario_idinventario', 'personas', 'estado_idestado'], 'required'],
+            [['inventario_idinventario', 'personas', 'estado_idestado'], 'integer'],
             [['inicio', 'fin'], 'safe'],
-            [['descripcion'], 'string', 'max' => 45],
-            [['detalles'], 'string', 'max' => 200],
             [['estado_idestado'], 'exist', 'skipOnError' => true, 'targetClass' => Estado::className(), 'targetAttribute' => ['estado_idestado' => 'idestado']],
+            [['inventario_idinventario'], 'exist', 'skipOnError' => true, 'targetClass' => Inventario::className(), 'targetAttribute' => ['inventario_idinventario' => 'idinventario']],
         ];
     }
 
@@ -52,11 +48,8 @@ class Membrecia extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idmembrecia' => 'Idmembrecia',
-            'descripcion' => 'Descripcion',
-            'detalles' => 'Detalles',
+            'inventario_idinventario' => 'Inventario Idinventario',
             'personas' => 'Personas',
-            'costo' => 'Costo',
             'inicio' => 'Inicio',
             'fin' => 'Fin',
             'estado_idestado' => 'Estado Idestado',
@@ -68,7 +61,15 @@ class Membrecia extends \yii\db\ActiveRecord
      */
     public function getGrupos()
     {
-        return $this->hasMany(Grupo::className(), ['membrecia_idmembrecia' => 'idmembrecia']);
+        return $this->hasMany(Grupo::className(), ['membrecia_inventario_idinventario' => 'inventario_idinventario']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHistorials()
+    {
+        return $this->hasMany(Historial::className(), ['membrecia_inventario_idinventario' => 'inventario_idinventario']);
     }
 
     /**
@@ -82,8 +83,8 @@ class Membrecia extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVentaMembrecias()
+    public function getInventarioIdinventario()
     {
-        return $this->hasMany(VentaMembrecia::className(), ['membrecia_idmembrecia' => 'idmembrecia']);
+        return $this->hasOne(Inventario::className(), ['idinventario' => 'inventario_idinventario']);
     }
 }

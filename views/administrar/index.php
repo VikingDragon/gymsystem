@@ -7,8 +7,10 @@
 			echo Html::a("Empleados",["empleado/index"]);
 			echo Html::a("Clientes",["cliente/index"]);
 			echo Html::a("Membrecias",["membrecia/index"]);
-			echo Html::a("Productos",["inventario/index"]);
-			echo Html::a("Caja",["caja/index"]);
+			echo Html::a("Productos",["articulo/index"]);
+			echo Html::a("Provedores",["provedor/index"]);
+			echo Html::a("Compras",["inventario/index"]);
+			echo Html::a("Ventas",["venta/venta"]);
 			echo Html::a("Reportes",[""]);
 		?>
 	</div>

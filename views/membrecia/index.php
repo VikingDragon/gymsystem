@@ -24,14 +24,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'idmembrecia',
-            'descripcion',
-            'detalles',
+            //'inventario_idinventario',
+            [
+                'attribute' => 'nombre',
+                'label' => 'Nombre',
+                'format' => 'raw',              
+                'value'=>function ($data) {
+                    return $data->inventarioIdinventario->nombre;
+                },
+            ],
+            [
+                'attribute' => 'precio',
+                'label' => 'Precio',
+                'format' => 'raw',              
+                'value'=>function ($data) {
+                    return "$".$data->inventarioIdinventario->precio;
+                },
+            ],
             'personas',
-            'costo',
-            // 'inicio',
-            // 'fin',
-            'estadoIdestado.estado',
+            //'inicio',
+            //'fin',
+            //'estado_idestado',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

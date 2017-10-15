@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Membrecia */
 
-$this->title = $model->descripcion;
+$this->title = $model->inventarioIdinventario->nombre;
 $this->params['breadcrumbs'][] = ['label' => 'Membrecias', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,11 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Actualizar', ['update', 'id' => $model->idmembrecia], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Eliminar', ['delete', 'id' => $model->idmembrecia], [
+        <?= Html::a('Actualizar', ['update', 'id' => $model->inventario_idinventario], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Eliminar', ['delete', 'id' => $model->inventario_idinventario], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => '¿Realmente deseas eliminar esta membrecia?',
+                'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
         ]) ?>
@@ -28,15 +28,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'idmembrecia',
-            'descripcion',
-            'detalles',
+            'inventarioIdinventario.nombre',
+            'inventarioIdinventario.precio',
+            'inventarioIdinventario.descripcion',
             'personas',
-            'costo',
-            'estadoIdestado.estado',
             'inicio',
             'fin',
-            
+            //'estado_idestado',
         ],
     ]) ?>
 

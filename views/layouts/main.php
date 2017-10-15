@@ -36,8 +36,8 @@ AppAsset::register($this);
             }
 
             if (\Yii::$app->user->can('empleado')) {
-                echo Html::a("Ventas",['administrar/index']);
-                echo Html::a("Caja",['administrar/index']);
+                echo Html::a("Ventas",['venta/venta']);
+                echo Html::a("Compras",['compra/compra']);
                 $extraMenu = true;
             }
             if(!$extraMenu){
@@ -50,7 +50,7 @@ AppAsset::register($this);
         <?php 
 
             if (\Yii::$app->user->can('empleado')) {
-                echo Html::a("Membrecias",['administrar/index']);
+                echo Html::a("Membrecias",['membrecia/index']);
                 $extraMenu = true;
             }
             if(!$extraMenu){

@@ -15,12 +15,13 @@ class MembreciaSearch extends Membrecia
     /**
      * @inheritdoc
      */
+    public $nombre;
+    public $precio;
     public function rules()
     {
         return [
-            [['idmembrecia', 'personas', 'estado_idestado'], 'integer'],
-            [['descripcion', 'detalles', 'inicio', 'fin'], 'safe'],
-            [['costo'], 'number'],
+            [['inventario_idinventario', 'personas', 'estado_idestado'], 'integer'],
+            [['inicio', 'fin', 'nombre', 'precio'], 'safe'],
         ];
     }
 
@@ -43,12 +44,23 @@ class MembreciaSearch extends Membrecia
     public function search($params)
     {
         $query = Membrecia::find();
+        $query->joinWith('inventarioIdinventario');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['nombre'] = [
+            'asc' => ['nombre' => SORT_ASC],
+            'desc' => ['nombre' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['precio'] = [
+            'asc' => ['precio' => SORT_ASC],
+            'desc' => ['precio' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -60,16 +72,15 @@ class MembreciaSearch extends Membrecia
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'idmembrecia' => $this->idmembrecia,
+            'inventario_idinventario' => $this->inventario_idinventario,
             'personas' => $this->personas,
-            'costo' => $this->costo,
             'inicio' => $this->inicio,
             'fin' => $this->fin,
             'estado_idestado' => $this->estado_idestado,
         ]);
 
-        $query->andFilterWhere(['like', 'descripcion', $this->descripcion])
-            ->andFilterWhere(['like', 'detalles', $this->detalles]);
+        $query->andFilterWhere(['like', 'nombre', $this->nombre]);
+        $query->andFilterWhere(['like', 'precio', $this->precio]);
 
         return $dataProvider;
     }
