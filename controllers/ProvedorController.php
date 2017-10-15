@@ -8,7 +8,7 @@ use app\models\search\ProvedorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\filters\AccessControl;
 /**
  * ProvedorController implements the CRUD actions for Provedor model.
  */
@@ -26,6 +26,15 @@ class ProvedorController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['administrador'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -36,6 +45,7 @@ class ProvedorController extends Controller
     public function actionIndex()
     {
         $searchModel = new ProvedorSearch();
+        $searchModel->estado_idestado = 1;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -64,6 +74,7 @@ class ProvedorController extends Controller
     public function actionCreate()
     {
         $model = new Provedor();
+        $model->estado_idestado = 1;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->idprovedor]);
@@ -101,8 +112,9 @@ class ProvedorController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        $model->estado_idestado = 2;
+        $model->save();
         return $this->redirect(['index']);
     }
 
