@@ -3,16 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Provedor;
-use app\models\search\ProvedorSearch;
+use app\models\Articulo;
+use app\models\Inventario;
+use app\models\search\ArticuloSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
 /**
- * ProvedorController implements the CRUD actions for Provedor model.
+ * ArticuloController implements the CRUD actions for Articulo model.
  */
-class ProvedorController extends Controller
+class ArticuloController extends Controller
 {
     /**
      * @inheritdoc
@@ -39,13 +41,12 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Lists all Provedor models.
+     * Lists all Articulo models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ProvedorSearch();
-        $searchModel->estado_idestado = 1;
+        $searchModel = new ArticuloSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -55,7 +56,7 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Displays a single Provedor model.
+     * Displays a single Articulo model.
      * @param integer $id
      * @return mixed
      */
@@ -67,17 +68,16 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Creates a new Provedor model.
+     * Creates a new Articulo model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Provedor();
-        $model->estado_idestado = 1;
+        $model = new Articulo();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idprovedor]);
+            return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -86,7 +86,7 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Updates an existing Provedor model.
+     * Updates an existing Articulo model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -96,7 +96,7 @@ class ProvedorController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idprovedor]);
+            return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -105,36 +105,35 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Deletes an existing Provedor model.
+     * Deletes an existing Articulo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-        $model->estado_idestado = 2;
-        $model->save();
+        $this->findModel($id)->delete();
+
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Provedor model based on its primary key value.
+     * Finds the Articulo model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Provedor the loaded model
+     * @return Articulo the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Provedor::findOne($id)) !== null) {
+        if (($model = Articulo::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    public function actionGetProvedor($q)
+    public function actionGetArticulo($q)
     {
         //if(Yii::$app->request->isAjax){
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -142,12 +141,14 @@ class ProvedorController extends Controller
                 ->orWhere(['like', 'nombre', $q])
                 ->all();
             $item=[];
-            foreach ($query as $provedor) {
-                array_push($item, [
-                        'label'=>$provedor->nombre,
-                        'value'=>$provedor->nombre,
-                        'id'=>$provedor->idprovedor
-                ]);
+            foreach ($query as $articulo) {
+                if$articulo->articulo){
+                    array_push($item, [
+                        'label'=>$articulo->nombre,
+                        'value'=>$articulo->nombre,
+                        'id'=>$articulo->idinventario
+                    ]);
+                }
             }
             return json_encode($item);
         //}

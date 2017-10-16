@@ -3,16 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Provedor;
-use app\models\search\ProvedorSearch;
+use app\models\Compra;
+use app\models\DetalleCompra;
+use app\models\search\CompraSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
 /**
- * ProvedorController implements the CRUD actions for Provedor model.
+ * CompraController implements the CRUD actions for Compra model.
  */
-class ProvedorController extends Controller
+class CompraController extends Controller
 {
     /**
      * @inheritdoc
@@ -31,7 +33,7 @@ class ProvedorController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrador'],
+                        'roles' => ['empleado'],
                     ],
                 ],
             ],
@@ -39,13 +41,12 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Lists all Provedor models.
+     * Lists all Compra models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ProvedorSearch();
-        $searchModel->estado_idestado = 1;
+        $searchModel = new CompraSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -55,7 +56,7 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Displays a single Provedor model.
+     * Displays a single Compra model.
      * @param integer $id
      * @return mixed
      */
@@ -67,17 +68,16 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Creates a new Provedor model.
+     * Creates a new Compra model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Provedor();
-        $model->estado_idestado = 1;
+        $model = new Compra();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idprovedor]);
+            return $this->redirect(['view', 'id' => $model->idcompra]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -86,7 +86,7 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Updates an existing Provedor model.
+     * Updates an existing Compra model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -96,7 +96,7 @@ class ProvedorController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idprovedor]);
+            return $this->redirect(['view', 'id' => $model->idcompra]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -105,51 +105,52 @@ class ProvedorController extends Controller
     }
 
     /**
-     * Deletes an existing Provedor model.
+     * Deletes an existing Compra model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-        $model->estado_idestado = 2;
-        $model->save();
+        $this->findModel($id)->delete();
+
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Provedor model based on its primary key value.
+     * Finds the Compra model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Provedor the loaded model
+     * @return Compra the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Provedor::findOne($id)) !== null) {
+        if (($model = Compra::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    public function actionGetProvedor($q)
+    public function actionCompra()
     {
-        //if(Yii::$app->request->isAjax){
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            $query=Provedor::find()
-                ->orWhere(['like', 'nombre', $q])
-                ->all();
-            $item=[];
-            foreach ($query as $provedor) {
-                array_push($item, [
-                        'label'=>$provedor->nombre,
-                        'value'=>$provedor->nombre,
-                        'id'=>$provedor->idprovedor
-                ]);
-            }
-            return json_encode($item);
-        //}
+        $compra = new Compra();
+        $compra->fecha = date("Y-m-d");
+        $compra->estado_compra_idestado_compra = 2;
+        $compra->empleado_idempleado =  Yii::$app->user->identity->empleado->idempleado;
+
+        $detalleCompra = new DetalleCompra();
+        $lote = new \app\models\Lote();
+        //$articulo = new \app\models\Articulo();
+        $carrito = [];
+
+        return $this->render('compra',[
+            'compra' => $compra,
+            'detalleCompra' => $detalleCompra,
+            'carrito' => $carrito,
+            'lote' => $lote,
+            //'articulo' => $articulo,
+        ]);
     }
 }

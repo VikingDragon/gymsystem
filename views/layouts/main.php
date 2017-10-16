@@ -88,6 +88,51 @@ AppAsset::register($this);
 </footer>
 
 <?php
+yii\bootstrap\Modal::begin([
+    'header' => '<span id="modalHeaderTitle"></span>',
+    'id' => 'modal',
+    'size' => 'modal-lg',
+    'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE]
+]);
+echo "<div id='modalContent' class='text-center'><div style='text-align:center'><img src='".Yii::getAlias('@web')."/images/load.gif'></div></div>";
+echo '<div id="modal-footer"></div>';
+yii\bootstrap\Modal::end();
+?>
+
+<?php
+yii\bootstrap\Modal::begin([
+    'header' => '<span id="modalHeaderTitle2"></span>',
+    'id' => 'modal2',
+    //'size' => 'modal-sm',
+    'clientOptions' => ['backdrop' => 'static', 'keyboard' => TRUE]
+]);
+echo "<div id='modalContent2' class='text-center'><div style='text-align:center'><img src='".Yii::getAlias('@web')."/images/load.gif'></div></div>";
+echo '<div id="modal-footer2"></div>';
+yii\bootstrap\Modal::end();
+?>
+
+<?php
+yii\bootstrap\Modal::begin([
+    'header' => '<span id="modalHeaderTitle3"></span>',
+    'id' => 'modal3',
+    //'size' => 'modal-sm',
+    'clientOptions' => ['backdrop' => 'static', 'keyboard' => TRUE]
+]);
+echo "<div id='modalContent3' class='text-center'>
+    <form>
+        <label>Dinero:</label>
+        <input class='form-control' type='text' id='dinero'>
+        <label>Total: $<label id= 'totalito'>0.00</label> </label><br>
+        <label>Cambio: $<label id= 'cambio'>0.00</label> </label><br>
+        <input type='button' onclick='calcularc()' id='calcularCambio' value='Calcular' />
+        <input type='button' onclick='comprar()' id='calcularCambio' value='Cobrar' />
+    </form>
+</div>";
+echo '<div id="modal-footer2"></div>';
+yii\bootstrap\Modal::end();
+?>
+
+<?php
     $this->registerJs(
         "
             var contador = 1;
