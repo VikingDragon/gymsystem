@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Articulo */
 
-$this->title = $model->inventario_idinventario;
+$this->title = $model->inventarioIdinventario->nombre;
 $this->params['breadcrumbs'][] = ['label' => 'Articulos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,8 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->inventario_idinventario], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->inventario_idinventario], [
+        <?= Html::a('Actualizar', ['update', 'id' => $model->inventario_idinventario], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Eliminar', ['delete', 'id' => $model->inventario_idinventario], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -28,7 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'inventario_idinventario',
+            'inventarioIdinventario.nombre',
+            'inventarioIdinventario.descripcion',
+            'inventarioIdinventario.precio',
             'codigo',
         ],
     ]) ?>

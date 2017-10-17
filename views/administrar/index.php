@@ -9,8 +9,8 @@
 			echo Html::a("Membrecias",["membrecia/index"]);
 			echo Html::a("Productos",["articulo/index"]);
 			echo Html::a("Provedores",["provedor/index"]);
-			echo Html::a("Compras",["compra/compra"]);
-			echo Html::a("Ventas",["venta/venta"]);
+			echo Html::a("Compras",["compra/index"]);
+			echo Html::a("Ventas",["venta/index"]);
 			echo Html::a("Reportes",[""]);
 		?>
 	</div>

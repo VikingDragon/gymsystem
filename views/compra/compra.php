@@ -6,6 +6,7 @@ use yii\web\JsExpression;
 use yii\bootstrap\Modal;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use yii\jui\DatePicker;
 
 $this->title = 'Compras';
 ?>
@@ -20,6 +21,7 @@ $this->title = 'Compras';
           <?php
             echo AutoComplete::widget([
               'id'=>'autoProvedor',
+              'value' => $compra->isNewRecord?'':$compra->provedorIdprovedor->nombre,
               'options'=>['class'=>'form-control'],
               'clientOptions' => [
                   'source' => new JsExpression("
@@ -56,7 +58,7 @@ $this->title = 'Compras';
               ],
             ]);
           ?>
-          <?= $form->field($compra, 'provedor_idprovedor')->textInput()->label(false) ?>
+          <?= $form->field($compra, 'provedor_idprovedor')->hiddenInput()->label(false) ?>
         </div>
         <div class="col-md-2">
           <label class="control-label" > Producto </label>
@@ -90,7 +92,7 @@ $this->title = 'Compras';
                 'change' => "function () { 
                   if(!variables['validoArticulo']){
                     variables['validoArticulo']='';
-                    $('#compra-provedor_idprovedor').val('');
+                    $('#lote-articulo_inventario_idinventario').val('');
                     $('#autoArticulo').val('');
                     popB('Advertencia', 'Articulo invalido', 'advertencia.jpg');
                   }
@@ -99,18 +101,38 @@ $this->title = 'Compras';
               ],
             ]);
           ?>
-          <?= $form->field($lote, 'articulo_inventario_idinventario')->textInput()->label(false) ?>
+          <?= $form->field($lote, 'articulo_inventario_idinventario')->hiddenInput()->label(false) ?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           <?= $form->field($lote, 'costo')->textInput() ?>
         </div>
         <div class="col-md-2">
           <?= $form->field($lote, 'cantidad')->textInput() ?>
         </div>
+
+        <div class="col-md-2">
+          <?= $form->field($lote, 'lote')->textInput() ?>
+        </div>
         
         <div class="col-md-2">
-          <?= $form->field($lote, 'caducidad')->textInput() ?>
+          <?= $form->field($lote, 'caducidad')->widget(DatePicker::classname(), [
+                'options'=>['style'=>'width:100%;', 'class'=>'form-control'],
+                //'language' => 'ru',
+                'clientOptions'=>['changeYear'=>true,'changeMonth'=>true,'maxDate'=>"+12y",'minDate'=>"-0y"],
+                'dateFormat' => 'yyyy-MM-dd',
+            ]) ?>
         </div>
+        
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <?= $form->field($detalleCompra, 'detalles')->textArea(['placeholder'=>'Comentarios']) ?>
+        </div>
+        
+      </div>
+      <div class="form-group">
+          <?= Html::submitButton('Añadir', ['class' => 'btn btn-primary']) ?>
       </div>
       <?php ActiveForm::end(); ?>
       <div class="form-group">
@@ -124,10 +146,48 @@ $this->title = 'Compras';
                   <th class="text-center" style="width:10%" >Precio</th>
                   <th class="text-center" style="width:10%">Total</th>
                 </tr>
+                <?php
+                  foreach ($carrito as $index => $detalle) {
+                    echo "<tr>";
+                      echo "<td>".$detalle->loteIdlote->articulo_inventario_idinventario."</td>";
+                      echo "<td>".$detalle->loteIdlote->inventarioIdinventario->nombre."</td>";
+                      echo "<td>".$detalle->loteIdlote->cantidad."</td>";
+                      echo "<td>$".$detalle->loteIdlote->costo."</td>";
+                      echo "<td>$".($detalle->loteIdlote->costo*$detalle->loteIdlote->cantidad)."</td>";
+
+                    echo "</tr>";
+                  }
+                ?>
               </table>
           </div>
           <div class="pull-right">
-            <button id="guardar" type="button" class="btn-lg btn-primary">Guardar</button>
+            <?php
+              if(!$compra->isNewRecord){
+                echo Html::a('Descartar', 
+                  ['delete', 'id' => $compra->idcompra], 
+                  [
+                      'class' => 'btn-lg btn-danger',
+                      'data' => [
+                          'confirm' => '¿Continuar? Perderas todos los articulos que añadiste.',
+                          'method' => 'post',
+                    ],
+                  ]);
+                echo "&nbsp;";
+                echo Html::a('Guardar', 
+                  ['create', 'id' => $compra->idcompra], 
+                  [
+                    'class' => 'btn-lg btn-primary',
+                    'data' => [
+                        'confirm' => '¿Continuar? ya no podras editar esta compra',
+                        'method' => 'post',
+                    ],
+                  ]);
+              }else{
+                echo Html::button('Descartar', ['class' => 'btn btn-danger', 'disabled'=>'disabled']);
+                echo "&nbsp;";
+                echo Html::button('Guardar', ['class' => 'btn btn-primary', 'disabled'=>'disabled']);
+              }
+            ?>
           </div>
         </div>
   </div>

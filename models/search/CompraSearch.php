@@ -12,6 +12,8 @@ use app\models\Compra;
  */
 class CompraSearch extends Compra
 {
+    public $provedor;
+    public $empleado;
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class CompraSearch extends Compra
     {
         return [
             [['idcompra', 'provedor_idprovedor', 'empleado_idempleado', 'estado_compra_idestado_compra'], 'integer'],
-            [['fecha'], 'safe'],
+            [['fecha','provedor','empleado'], 'safe'],
         ];
     }
 
@@ -42,12 +44,23 @@ class CompraSearch extends Compra
     public function search($params)
     {
         $query = Compra::find();
-
+        $query->joinWith('provedorIdprovedor');
+        $query->joinWith('empleadoIdempleado');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['empleado'] = [
+            'asc' => ['empleado.nombre' => SORT_ASC],
+            'desc' => ['empleado.nombre' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['provedor'] = [
+            'asc' => ['provedor.nombre' => SORT_ASC],
+            'desc' => ['provedor.nombre' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -64,8 +77,11 @@ class CompraSearch extends Compra
             'provedor_idprovedor' => $this->provedor_idprovedor,
             'empleado_idempleado' => $this->empleado_idempleado,
             'estado_compra_idestado_compra' => $this->estado_compra_idestado_compra,
+            
         ]);
-
+        $query->andFilterWhere(['like', 'provedor.nombre', $this->provedor]);
+        $query->andFilterWhere(['like', 'empleado.nombre', $this->empleado]);
+        
         return $dataProvider;
     }
 }

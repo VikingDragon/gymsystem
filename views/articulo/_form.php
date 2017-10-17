@@ -12,12 +12,22 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'inventario_idinventario')->textInput() ?>
+    <div class="row">
+    	<div class="col-md-6">
+    		<?= $form->field($inventario, 'nombre')->textInput(['maxlength' => true]) ?>
+    	</div>
+    	<div class="col-md-4">
+    		<?= $form->field($model, 'codigo')->textInput(['maxlength' => true]) ?>
+    	</div>
+    	<div class="col-md-2">
+    		<?= $form->field($inventario, 'precio')->textInput() ?>
+    	</div>
+    </div>
 
-    <?= $form->field($model, 'codigo')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($inventario, 'descripcion')->textarea(['rows' => 3]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Registrar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

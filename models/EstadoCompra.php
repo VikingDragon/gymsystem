@@ -40,7 +40,7 @@ class EstadoCompra extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idestado_compra' => 'Idestado Compra',
+            'idestado_compra' => 'Folio Estado',
             'estado' => 'Estado',
         ];
     }

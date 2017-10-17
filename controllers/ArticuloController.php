@@ -74,15 +74,33 @@ class ArticuloController extends Controller
      */
     public function actionCreate()
     {
+        $inventario = new Inventario();
         $model = new Articulo();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction();
+
+        try {
+            if ($inventario->load(Yii::$app->request->post()) && $inventario->save()) {
+                $model->inventario_idinventario = $inventario->idinventario;
+                if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                    $transaction->commit();
+                    return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
+                }
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
         }
+
+        
+        return $this->render('create', [
+            'model' => $model,
+            'inventario' => $inventario
+        ]);
     }
 
     /**
@@ -94,14 +112,18 @@ class ArticuloController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $inventario = Inventario::findOne($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if ($inventario->load(Yii::$app->request->post()) && $inventario->save()) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->inventario_idinventario]);
+            }
         }
+        
+        return $this->render('update', [
+            'model' => $model,
+            'inventario' => $inventario
+        ]);
     }
 
     /**
@@ -137,12 +159,12 @@ class ArticuloController extends Controller
     {
         //if(Yii::$app->request->isAjax){
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            $query=Provedor::find()
+            $query=Inventario::find()
                 ->orWhere(['like', 'nombre', $q])
                 ->all();
             $item=[];
             foreach ($query as $articulo) {
-                if$articulo->articulo){
+                if($articulo->articulo){
                     array_push($item, [
                         'label'=>$articulo->nombre,
                         'value'=>$articulo->nombre,

@@ -7,13 +7,13 @@ use Yii;
 /**
  * This is the model class for table "lote".
  *
- * @property string $idlote
- * @property integer $articulo_inventario_idinventario
+ * @property integer $idlote
  * @property string $lote
  * @property string $caducidad
  * @property integer $cantidad
  * @property integer $cantidad_actual
  * @property double $costo
+ * @property integer $articulo_inventario_idinventario
  *
  * @property DetalleCompra[] $detalleCompras
  * @property Articulo $articuloInventarioIdinventario
@@ -34,13 +34,11 @@ class Lote extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['idlote', 'articulo_inventario_idinventario', 'lote', 'cantidad'], 'required'],
-            [['articulo_inventario_idinventario', 'cantidad', 'cantidad_actual'], 'integer'],
             [['caducidad'], 'safe'],
+            [['cantidad', 'articulo_inventario_idinventario','costo'], 'required'],
+            [['cantidad', 'cantidad_actual', 'articulo_inventario_idinventario'], 'integer'],
             [['costo'], 'number'],
-            [['idlote', 'lote'], 'string', 'max' => 45],
-            [['articulo_inventario_idinventario'], 'unique'],
-            [['idlote'], 'unique'],
+            [['lote'], 'string', 'max' => 45],
             [['articulo_inventario_idinventario'], 'exist', 'skipOnError' => true, 'targetClass' => Articulo::className(), 'targetAttribute' => ['articulo_inventario_idinventario' => 'inventario_idinventario']],
         ];
     }
@@ -52,12 +50,12 @@ class Lote extends \yii\db\ActiveRecord
     {
         return [
             'idlote' => 'Idlote',
-            'articulo_inventario_idinventario' => 'Articulo Inventario Idinventario',
             'lote' => 'Lote',
             'caducidad' => 'Caducidad',
             'cantidad' => 'Cantidad',
             'cantidad_actual' => 'Cantidad Actual',
             'costo' => 'Costo',
+            'articulo_inventario_idinventario' => 'Articulo',
         ];
     }
 
@@ -75,5 +73,13 @@ class Lote extends \yii\db\ActiveRecord
     public function getArticuloInventarioIdinventario()
     {
         return $this->hasOne(Articulo::className(), ['inventario_idinventario' => 'articulo_inventario_idinventario']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInventarioIdinventario()
+    {
+        return $this->hasOne(Inventario::className(), ['idinventario' => 'articulo_inventario_idinventario']);
     }
 }

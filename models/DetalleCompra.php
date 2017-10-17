@@ -10,7 +10,7 @@ use Yii;
  * @property integer $iddetalle_compra
  * @property integer $compra_idcompra
  * @property string $detalles
- * @property string $lote_idlote
+ * @property integer $lote_idlote
  *
  * @property Compra $compraIdcompra
  * @property Lote $loteIdlote
@@ -32,9 +32,8 @@ class DetalleCompra extends \yii\db\ActiveRecord
     {
         return [
             [['compra_idcompra', 'lote_idlote'], 'required'],
-            [['compra_idcompra'], 'integer'],
+            [['compra_idcompra', 'lote_idlote'], 'integer'],
             [['detalles'], 'string'],
-            [['lote_idlote'], 'string', 'max' => 45],
             [['compra_idcompra'], 'exist', 'skipOnError' => true, 'targetClass' => Compra::className(), 'targetAttribute' => ['compra_idcompra' => 'idcompra']],
             [['lote_idlote'], 'exist', 'skipOnError' => true, 'targetClass' => Lote::className(), 'targetAttribute' => ['lote_idlote' => 'idlote']],
         ];
@@ -46,10 +45,10 @@ class DetalleCompra extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'iddetalle_compra' => 'Iddetalle Compra',
-            'compra_idcompra' => 'Compra Idcompra',
+            'iddetalle_compra' => 'Folio',
+            'compra_idcompra' => 'Compra',
             'detalles' => 'Detalles',
-            'lote_idlote' => 'Lote Idlote',
+            'lote_idlote' => 'Lote ',
         ];
     }
 

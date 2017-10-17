@@ -72,17 +72,12 @@ class CompraController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $model = new Compra();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idcompra]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+        $compra = $this->findModel($id);
+        $compra->estado_compra_idestado_compra = 1;
+        $compra->save();
+        return $this->redirect(['view', 'id' => $compra->idcompra]);
     }
 
     /**
@@ -112,9 +107,13 @@ class CompraController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $compra = $this->findModel($id);
+        foreach ($compra->detalleCompras as $key => $detalle) {
+            \app\models\Lote::findOne($detalle->lote_idlote)->delete();
+            //$detalle->delete();
+        }
+        $compra->delete();
+        return $this->redirect(['compra/compra']);
     }
 
     /**
@@ -135,7 +134,19 @@ class CompraController extends Controller
 
     public function actionCompra()
     {
-        $compra = new Compra();
+        $carrito = [];
+        $compra = Compra::find()
+            ->where([
+                'estado_compra_idestado_compra'=>2,
+                'empleado_idempleado' => Yii::$app->user->identity->empleado->idempleado
+            ])
+            ->OrderBy('idcompra')
+            ->one();
+
+        if(!$compra){
+            $compra = new Compra();
+        }
+        
         $compra->fecha = date("Y-m-d");
         $compra->estado_compra_idestado_compra = 2;
         $compra->empleado_idempleado =  Yii::$app->user->identity->empleado->idempleado;
@@ -143,7 +154,37 @@ class CompraController extends Controller
         $detalleCompra = new DetalleCompra();
         $lote = new \app\models\Lote();
         //$articulo = new \app\models\Articulo();
-        $carrito = [];
+
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction();
+
+        try {
+            if ($lote->load(Yii::$app->request->post())) {
+                if ($compra->load(Yii::$app->request->post())) {
+                    $lote->cantidad_actual = $lote->cantidad;
+                    if($compra->save() && $lote->save()){
+                        $detalleCompra->load(Yii::$app->request->post());
+                        $detalleCompra->compra_idcompra = $compra->idcompra;
+                        $detalleCompra->lote_idlote = $lote->idlote;
+                        if($detalleCompra->save()){
+                            $transaction->commit();
+                        }
+                    }
+                 }
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        if(isset($compra->idcompra)){
+            $carrito = DetalleCompra::find()
+                ->where(['compra_idcompra'=>$compra->idcompra])
+                ->all();
+        }
 
         return $this->render('compra',[
             'compra' => $compra,

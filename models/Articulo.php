@@ -43,7 +43,7 @@ class Articulo extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'inventario_idinventario' => 'Inventario Idinventario',
+            'inventario_idinventario' => 'Inventario',
             'codigo' => 'Codigo',
         ];
     }

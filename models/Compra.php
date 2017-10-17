@@ -49,11 +49,11 @@ class Compra extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idcompra' => 'Idcompra',
+            'idcompra' => 'Folio',
             'fecha' => 'Fecha',
-            'provedor_idprovedor' => 'Provedor Idprovedor',
-            'empleado_idempleado' => 'Empleado Idempleado',
-            'estado_compra_idestado_compra' => 'Estado Compra Idestado Compra',
+            'provedor_idprovedor' => 'Provedor',
+            'empleado_idempleado' => 'Empleado',
+            'estado_compra_idestado_compra' => 'Estado',
         ];
     }
 
